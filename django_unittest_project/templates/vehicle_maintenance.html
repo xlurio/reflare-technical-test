@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Vehicle Maintenance Details{% endblock title %}
+{% block content %}
+  <h1>Vehicle Maintenance Details</h1>
+  <p>Vehicle ID: {{ vehicle.id }}</p>
+  <p>Type: {{ vehicle.type }}</p>
+  <p>Capacity: {{ vehicle.capacity }}</p>
+  <p>Last maintenance: {{ vehicle.last_maintenance }}</p>
+  <p>Total maintenance cost: {{ total_cost }}</p>
+  <h2>Maintenance Logs</h2>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+      <th>Maintenace ID</th>
+      <th>Maintenance Date</th>
+      <th>Cost</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+      <tr>
+        <td>{{ log.id }}</td>
+        <td>{{ log.maintenance_date }}</td>
+        <td>{{ log.cost }}</td>
+        <td>{{ log.description }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock content %}

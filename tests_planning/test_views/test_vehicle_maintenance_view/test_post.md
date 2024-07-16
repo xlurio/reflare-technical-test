@@ -1,0 +1,30 @@
+# Happy Paths
+- [ ] **Case 1:**
+	- Given: `POST` request from a staff user specifying an existent `Vehicle` and valid `MaintenanceLog` payload
+	- When: request is received
+	- Then: a `201` response should be sent with the appropriate message, a `MaintenanceLog` should be created from the passed data and the `Vehicle.last_maintenance` should be updated
+# Unhappy Paths
+- [ ] **Case 1:**
+	- Given: `POST` request from unauthenticated user
+	- When: request is received
+	- Then: a `401` error response should be sent, no `MaintenanceLog` should be created neither the `last_maintenance` of the vehicle should change
+- [ ] **Case 2:**
+	- Given: `POST` request from a non staff user
+	- When: request is received
+	- Then: a `403` error response should be sent with the appropriate error message, no `MaintenanceLog` should be created neither the `last_maintenance` of the `Vehicle` should change
+- [ ] **Case 3:**
+	- Given: `POST` request from a staff user specifying a non existent `Vehicle`
+	- When: request is received
+	- Then: a `404` error response should be sent, and no `MaintenanceLog` should be created
+- [ ] **Case 4:**
+	- Given: `POST` request from a staff user with an invalid JSON on the body
+	- When: request is received
+	- Then: a `400` error response should be send with the appropriate message, no `MaintenanceLog` should be created neither the `last_maintenance` of the `Vehicle` should change
+- [ ] **Case 5:**
+	- Given: `POST` request from a staff user but the body misses any field
+	- When: request is received
+	- Then: a `400` error response should be send with the appropriate message, no `MaintenanceLog` should be created neither the `last_maintenance` of the `Vehicle` should change
+- [ ] **Case 6:**
+	- Given: `POST` request from a staff user but the validation of the `MaintenanceLog` fails
+	- When: request is received
+	- Then: a `400` error response should be send with the appropriate message, no `MaintenanceLog` should be created neither the `last_maintenance` of the `Vehicle` should change

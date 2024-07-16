@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Route Efficiency{% endblock title %}
+{% block content %}
+  <h1>Route Efficiency</h1>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+      <th>Route ID</th>
+      <th>Total Capacity</th>
+      <th>Average Capacity</th>
+      <th>Assignment Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for route in route_data %}
+      <tr>
+        <td>{{ route.route.id }}</td>
+        <td>{{ route.total_capacity }}</td>
+        <td>{{ route.avg_capacity }}</td>
+        <td>{{ route.assignment_count }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock content %}

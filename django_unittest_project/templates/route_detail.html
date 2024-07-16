@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Route Detail{% endblock title %}
+{% block content %}
+  <h1>Route Detail</h1>
+  <p>Route ID: {{ route.id }}</p>
+  <p>Start Point: {{ route.start_point }}</p>
+  <p>End Point: {{ route.end_point }}</p>
+
+  <h2>Vehicles</h2>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+      <th>Vehicle</th>
+      <th>Driver Name</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for assignment in assignments %}
+      <tr>
+        <td>{{ assignment.vehicle }}</td>
+        <td>{{ assignment.driver_name }}</td>
+        <td>{{ assignment.start_time }}</td>
+        <td>{{ assignment.end_time }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock content %}
