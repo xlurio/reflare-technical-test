@@ -19,29 +19,39 @@ class StaffRequiredMixin(UserPassesTestMixin):
 class VehicleListView(LoginRequiredMixin, View):
     def get(self, request):
         vehicles = Vehicle.objects.all()
-        return render(request, 'vehicle_list.html', {'vehicles': vehicles})
+        return render(request, "vehicle_list.html", {"vehicles": vehicles})
 
 
 class RouteDetailView(LoginRequiredMixin, View):
     def get(self, request, route_number):
         route = get_object_or_404(Route, route_number=route_number)
-        assignments = route.routeassignment_set.all().order_by('start_time')
-        return render(request, 'route_detail.html', {'route': route, 'assignments': assignments})
+        assignments = route.routeassignment_set.all().order_by("start_time")
+        return render(
+            request, "route_detail.html", {"route": route, "assignments": assignments}
+        )
 
 
 class VehicleMaintenanceView(LoginRequiredMixin, View):
     def get(self, request, vehicle_id):
         vehicle = get_object_or_404(Vehicle, vehicle_id=vehicle_id)
-        maintenance_logs = MaintenanceLog.objects.filter(vehicle=vehicle).order_by('-maintenance_date')
-        total_cost = maintenance_logs.aggregate(Sum('cost'))['cost__sum']
-        return render(request, 'vehicle_maintenance.html',
-                      {'vehicle': vehicle, 'logs': maintenance_logs, 'total_cost': total_cost})
+        maintenance_logs = MaintenanceLog.objects.filter(vehicle=vehicle).order_by(
+            "-maintenance_date"
+        )
+        total_cost = maintenance_logs.aggregate(Sum("cost"))["cost__sum"]
+        return render(
+            request,
+            "vehicle_maintenance.html",
+            {"vehicle": vehicle, "logs": maintenance_logs, "total_cost": total_cost},
+        )
 
     @method_decorator(csrf_exempt)
     @method_decorator(require_http_methods(["POST"]))
     def post(self, request, vehicle_id):
         if not request.user.is_staff:
-            return JsonResponse({'error': 'You do not have permission to perform this action.'}, status=403)
+            return JsonResponse(
+                {"error": "You do not have permission to perform this action."},
+                status=403,
+            )
 
         vehicle = get_object_or_404(Vehicle, vehicle_id=vehicle_id)
 
@@ -49,9 +59,9 @@ class VehicleMaintenanceView(LoginRequiredMixin, View):
             data = json.loads(request.body)
             maintenance_log = MaintenanceLog(
                 vehicle=vehicle,
-                maintenance_date=data['maintenance_date'],
-                description=data['description'],
-                cost=data['cost']
+                maintenance_date=data["maintenance_date"],
+                description=data["description"],
+                cost=data["cost"],
             )
             maintenance_log.full_clean()
             maintenance_log.save()
@@ -60,13 +70,17 @@ class VehicleMaintenanceView(LoginRequiredMixin, View):
             vehicle.last_maintenance = maintenance_log.maintenance_date
             vehicle.save()
 
-            return JsonResponse({'message': 'Maintenance log added successfully.'}, status=201)
+            return JsonResponse(
+                {"message": "Maintenance log added successfully."}, status=201
+            )
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
         except KeyError as e:
-            return JsonResponse({'error': f'Missing required field: {str(e)}'}, status=400)
+            return JsonResponse(
+                {"error": f"Missing required field: {str(e)}"}, status=400
+            )
         except ValidationError as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            return JsonResponse({"error": str(e)}, status=400)
 
 
 class RouteEfficiencyView(LoginRequiredMixin, View):
@@ -75,12 +89,18 @@ class RouteEfficiencyView(LoginRequiredMixin, View):
         route_data = []
         for route in routes:
             assignments = route.routeassignment_set.all()
-            total_capacity = assignments.aggregate(Sum('vehicle__capacity'))['vehicle__capacity__sum']
-            avg_capacity = assignments.aggregate(Avg('vehicle__capacity'))['vehicle__capacity__avg']
-            route_data.append({
-                'route': route,
-                'total_capacity': total_capacity,
-                'average_capacity': avg_capacity,
-                'assignment_count': assignments.count()
-            })
-        return render(request, 'route_efficiency.html', {'route_data': route_data})
+            total_capacity = assignments.aggregate(Sum("vehicle__capacity"))[
+                "vehicle__capacity__sum"
+            ]
+            avg_capacity = assignments.aggregate(Avg("vehicle__capacity"))[
+                "vehicle__capacity__avg"
+            ]
+            route_data.append(
+                {
+                    "route": route,
+                    "total_capacity": total_capacity,
+                    "average_capacity": avg_capacity,
+                    "assignment_count": assignments.count(),
+                }
+            )
+        return render(request, "route_efficiency.html", {"route_data": route_data})

@@ -51,6 +51,7 @@ class GetTests(test.TestCase):
             template.name for template in response.templates
         ]
         assert set(actual_logs_ids) == expected_maintenance_logs_ids
+        assert cast("models.QuerySet", response.context["logs"]).model == MaintenanceLog
         assert response.context["total_cost"] == expected_total_cost
 
     def test_unauthenticated(self) -> None:
