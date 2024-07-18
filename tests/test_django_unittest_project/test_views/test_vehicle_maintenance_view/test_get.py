@@ -59,7 +59,6 @@ class GetTests(test.TestCase):
         - When: request is received
         - Then: a `302` response should be sent redirecting the user to the login page
         """
-        MaintenanceLogFactory.create_batch(3, vehicle=self.__vehicle)
         expected_location_header = (
             f"{self.LOGIN_URL}?next={self.__get_url_from_vehicle(self.__vehicle)}"
         )
