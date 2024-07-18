@@ -23,8 +23,8 @@ class GetTests(test.TestCase):
         - Given: `GET` request from an authenticated user specifying an existent
             `Vehicle`
         - When: request is received
-        - Then: a `200` response with the header
-            `Content-Type: text/html; charset=utf-8` and the appropriate context
+        - Then: a `200` response with the appropriate template rendered in the body and
+            the appropriate `context`
         """
         self.client.force_login(UserFactory.create())
         MaintenanceLogFactory.create_batch(3, vehicle=self.__vehicle)
@@ -47,6 +47,9 @@ class GetTests(test.TestCase):
         assert response.status_code == 200
         assert str(response.headers["Content-Type"]).startswith("text/html")
         assert response.context["vehicle"] == self.__vehicle
+        assert "vehicle_maintenance.html" in [
+            template.name for template in response.templates
+        ]
         assert set(actual_logs_ids) == expected_maintenance_logs_ids
         assert response.context["total_cost"] == expected_total_cost
 
