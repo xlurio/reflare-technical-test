@@ -30,7 +30,7 @@ def generate_route_assignment_start_time() -> dt.time:
 
 def generate_route_assignment_end_time(self: "RouteAssignmentFactory") -> dt.time:
     start_time: dt.time = self.start_time
-    return dt.time(rd.randint(start_time.hour + 1, 24), rd.randint(0, 59))
+    return dt.time(rd.randint(start_time.hour + 1, 23), rd.randint(0, 59))
 
 
 class VehicleFactory(DjangoModelFactory):

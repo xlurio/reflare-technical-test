@@ -1,0 +1,22 @@
+# Happy Paths
+- [ ] **Case 1:**
+	- Given: `Vehicle` with `type == "BUS"` and `capacity <= 100`
+	- When: `clean` is called
+	- Then: `None` should be returned
+- [ ] **Case 2:**
+	- Given: `Vehicle` with `type == "TRAM"` and `capacity <= 250`
+	- When: `clean` is called
+	- Then: `None` should be returned
+- [ ] **Case 3:**
+	- Given: `Vehicle` with `type == "SUBWAY"`
+	- When: `clean` is called
+	- Then: `None` should be returned
+# Unhappy Paths
+- [ ] **Case 1:**
+	- Given: `Vehicle` with `type == "BUS"` and `capacity > 100`
+	- When: `clean` is called
+	- Then: a `ValidationError` should be raised with the appropriated message
+- [ ] **Case 2:**
+	- Given: `Vehicle` with `type == "TRAM"` and `capacity > 250`
+	- When: `clean` is called
+	- Then: a `ValidationError` should be raised with the appropriated message
