@@ -1,22 +1,23 @@
 from typing import cast
-from django import test
+
+from django import test, urls as dj_urls
+from django.conf import settings
 from django.db import models
+
 from django_unittest_project.models import MaintenanceLog, Vehicle
-from django import urls as dj_urls
 from tests.test_django_unittest_project.factories import (
     MaintenanceLogFactory,
     UserFactory,
     VehicleFactory,
 )
 from tests.utils import expected_x_but_got_y, serialize_response
-from django.conf import settings
 
 
 class GetTests(test.TestCase):
     LOGIN_URL = dj_urls.reverse_lazy(settings.LOGIN_URL)
 
     def setUp(self) -> None:
-        self.__vehicle: "Vehicle" = VehicleFactory.create()
+        self.__vehicle: Vehicle = VehicleFactory.create()
 
     def test_success(self) -> None:
         """
@@ -29,10 +30,10 @@ class GetTests(test.TestCase):
         self.client.force_login(UserFactory.create())
         MaintenanceLogFactory.create_batch(3, vehicle=self.__vehicle)
         expected_maintenance_logs = MaintenanceLog.objects.filter(
-            vehicle=self.__vehicle
+            vehicle=self.__vehicle,
         ).order_by("-maintenance_date")
         expected_maintenance_logs_ids = set(
-            expected_maintenance_logs.values_list("pk", flat=True)
+            expected_maintenance_logs.values_list("pk", flat=True),
         )
         expected_total_cost = expected_maintenance_logs.aggregate(models.Sum("cost"))[
             "cost__sum"
@@ -41,7 +42,8 @@ class GetTests(test.TestCase):
         response = self.client.get(self.__get_url_from_vehicle(self.__vehicle))
 
         actual_logs_ids = cast("models.QuerySet", response.context["logs"]).values_list(
-            "pk", flat=True
+            "pk",
+            flat=True,
         )
 
         assert response.status_code == 200
@@ -90,5 +92,6 @@ class GetTests(test.TestCase):
 
     def __get_url_from_vehicle(self, vehicle: "Vehicle") -> str:
         return dj_urls.reverse(
-            "vehicle_maintenance", kwargs={"vehicle_id": vehicle.vehicle_id}
+            "vehicle_maintenance",
+            kwargs={"vehicle_id": vehicle.vehicle_id},
         )

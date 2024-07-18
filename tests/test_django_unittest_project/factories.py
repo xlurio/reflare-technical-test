@@ -1,9 +1,10 @@
-from typing import TYPE_CHECKING
-from factory.django import DjangoModelFactory
-import factory
-import random as rd
 import datetime as dt
+import random as rd
+from typing import TYPE_CHECKING
+
+import factory
 from django.conf import settings
+from factory.django import DjangoModelFactory
 
 if TYPE_CHECKING:
     from django_unittest_project.users.models import User
@@ -28,7 +29,7 @@ def generate_route_assignment_start_time() -> dt.time:
 
 
 def generate_route_assignment_end_time(self: "RouteAssignmentFactory") -> dt.time:
-    start_time: "dt.time" = self.start_time
+    start_time: dt.time = self.start_time
     return dt.time(rd.randint(start_time.hour + 1, 24), rd.randint(0, 59))
 
 
@@ -67,7 +68,7 @@ class MaintenanceLogFactory(DjangoModelFactory):
         model = "django_unittest_project.MaintenanceLog"
 
     vehicle = factory.SubFactory(
-        "tests.test_django_unittest_project.factories.VehicleFactory"
+        "tests.test_django_unittest_project.factories.VehicleFactory",
     )
     maintenance_date = dt.date.today()
     description = factory.Faker("sentence")
@@ -90,10 +91,10 @@ class RouteAssignmentFactory(DjangoModelFactory):
         model = "django_unittest_project.RouteAssignment"
 
     vehicle = factory.SubFactory(
-        "tests.test_django_unittest_project.factories.VehicleFactory"
+        "tests.test_django_unittest_project.factories.VehicleFactory",
     )
     route = factory.SubFactory(
-        "tests.test_django_unittest_project.factories.RouteFactory"
+        "tests.test_django_unittest_project.factories.RouteFactory",
     )
     driver_name = factory.Faker("name")
     start_time = factory.LazyFunction(generate_route_assignment_start_time)

@@ -1,9 +1,11 @@
 from typing import cast
-from django import test
-from django import urls as dj_urls
+
+from django import test, urls as dj_urls
 from django.conf import settings
 from django.db import models
-from django_unittest_project.models import Route, RouteAssignment
+
+from django_unittest_project.models import Route
+from django_unittest_project.models import RouteAssignment
 from tests.test_django_unittest_project.factories import (
     RouteAssignmentFactory,
     RouteFactory,
@@ -16,7 +18,7 @@ class RouteDetailTests(test.TestCase):
     LOGIN_URL = dj_urls.reverse_lazy(settings.LOGIN_URL)
 
     def setUp(self) -> None:
-        self.__route: "Route" = RouteFactory.create()
+        self.__route: Route = RouteFactory.create()
 
     def test_success(self) -> None:
         """
@@ -34,7 +36,8 @@ class RouteDetailTests(test.TestCase):
         response = self.client.get(self.__get_url_from_route(self.__route))
 
         actual_assignment_ids = cast(
-            "models.QuerySet", response.context["assignments"]
+            "models.QuerySet",
+            response.context["assignments"],
         ).values_list("pk", flat=True)
 
         assert response.status_code == 200
@@ -82,5 +85,6 @@ class RouteDetailTests(test.TestCase):
 
     def __get_url_from_route(self, route: "Route") -> str:
         return dj_urls.reverse(
-            "route_detail", kwargs={"route_number": route.route_number}
+            "route_detail",
+            kwargs={"route_number": route.route_number},
         )

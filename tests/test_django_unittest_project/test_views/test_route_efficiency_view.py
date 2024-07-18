@@ -1,14 +1,15 @@
 from collections.abc import Mapping
 from typing import Any
-from django import test
+
+from django import test, urls as dj_urls
+from django.conf import settings
 from django.db import models
+
 from django_unittest_project.models import Route
 from tests.test_django_unittest_project.factories import (
     RouteAssignmentFactory,
     UserFactory,
 )
-from django import urls as dj_urls
-from django.conf import settings
 from tests.utils import expected_x_but_got_y, serialize_response
 
 
@@ -18,8 +19,7 @@ class RouteEfficiencyViewTests(test.TestCase):
 
     def test_success(self) -> None:
         """
-        - Given: `GET` request from an authenticated user specifying an existent `Route`
-        - When: request is received
+        - Given: `GET` request from an authenticated user
         - Then: a `200` response with the appropriate template rendered in the body and
             the appropriate `context`
         """

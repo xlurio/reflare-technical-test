@@ -1,21 +1,25 @@
-from collections.abc import Mapping
-import json
-from typing import Any
-from django import test
-from django import urls as dj_urls
-import datetime as dt
-from decimal import Decimal
-from django_unittest_project.models import MaintenanceLog, Vehicle
-from tests.test_django_unittest_project.factories import UserFactory, VehicleFactory
 import dataclasses as dc
-from django import http as dj_http
-from django.test import client as test_client
-from django.conf import settings
+import datetime as dt
+import json
 import random as rd
-from django.core import exceptions as core_exc
+from collections.abc import Mapping
+from decimal import Decimal
+from typing import Any
 from unittest import mock as ut_mock
 
-from tests.utils import expected_x_but_got_y, serialize_response
+from django import http as dj_http
+from django import test
+from django import urls as dj_urls
+from django.conf import settings
+from django.core import exceptions as core_exc
+from django.test import client as test_client
+
+from django_unittest_project.models import MaintenanceLog
+from django_unittest_project.models import Vehicle
+from tests.test_django_unittest_project.factories import UserFactory
+from tests.test_django_unittest_project.factories import VehicleFactory
+from tests.utils import expected_x_but_got_y
+from tests.utils import serialize_response
 
 
 class PostTestsConstants:
@@ -96,7 +100,7 @@ class ValidationErrorArrangement:
 
 class PostTests(test.TestCase):
     def setUp(self) -> None:
-        self.__vehicle: "Vehicle" = VehicleFactory.create()
+        self.__vehicle: Vehicle = VehicleFactory.create()
 
     def test_success(self) -> None:
         """
@@ -126,7 +130,7 @@ class PostTests(test.TestCase):
         self.__assert_success(arrangement, response)
 
     def __assert_success(
-        self, arrangement: "SuccessArrangement", response: dj_http.HttpResponse
+        self, arrangement: "SuccessArrangement", response: dj_http.HttpResponse,
     ) -> None:
         maintenance_log = MaintenanceLog.objects.filter(vehicle=self.__vehicle).last()
 
@@ -172,7 +176,7 @@ class PostTests(test.TestCase):
         assert (
             response.headers["Location"] == arrangement.expected_location_header
         ), expected_x_but_got_y(
-            arrangement.expected_location_header, response.headers["Location"]
+            arrangement.expected_location_header, response.headers["Location"],
         )
         assert arrangement.maintenance_logs_count == MaintenanceLog.objects.count()
         assert self.__vehicle.last_maintenance == arrangement.prev_last_maintenance
@@ -189,7 +193,7 @@ class PostTests(test.TestCase):
         maintenance_logs_count = MaintenanceLog.objects.count()
         prev_last_maintenance = self.__vehicle.last_maintenance
         expected_content = json.dumps(
-            {"error": "You do not have permission to perform this action."}
+            {"error": "You do not have permission to perform this action."},
         ).encode()
 
         self.client.force_login(UserFactory.create(is_staff=False))
@@ -294,7 +298,7 @@ class PostTests(test.TestCase):
 
         assert response.status_code == 400, serialize_response(response)
         assert response.content == arrangement.expected_content, expected_x_but_got_y(
-            response.content, arrangement.expected_content
+            response.content, arrangement.expected_content,
         )
         assert arrangement.maintenance_logs_count == MaintenanceLog.objects.count()
         assert self.__vehicle.last_maintenance == arrangement.prev_last_maintenance
@@ -328,12 +332,12 @@ class PostTests(test.TestCase):
 
         assert response.status_code == 400, serialize_response(response)
         assert response.content == arrangement.expected_content, expected_x_but_got_y(
-            response.content, arrangement.expected_content
+            response.content, arrangement.expected_content,
         )
         assert arrangement.maintenance_logs_count == MaintenanceLog.objects.count()
         assert self.__vehicle.last_maintenance == arrangement.prev_last_maintenance
 
     def __get_url_from_vehicle(self, vehicle: "Vehicle") -> str:
         return dj_urls.reverse(
-            "vehicle_maintenance", kwargs={"vehicle_id": vehicle.vehicle_id}
+            "vehicle_maintenance", kwargs={"vehicle_id": vehicle.vehicle_id},
         )
