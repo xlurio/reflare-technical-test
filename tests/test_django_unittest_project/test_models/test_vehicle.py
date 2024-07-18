@@ -49,11 +49,9 @@ class VehicleTests(test.TestCase):
             type="BUS", capacity=rd.randint(101, 500)
         )
 
-        try:
+        with self.assertRaises(core_exc.ValidationError) as context:
             vehicle.clean()
-
-        except core_exc.ValidationError as error:
-            assert error.message == "Buses cannot have a capacity greater than 100."
+            assert context.exception.message == "Buses cannot have a capacity greater than 100."
 
     def test_tram_invalid(self) -> None:
         """
@@ -65,8 +63,6 @@ class VehicleTests(test.TestCase):
             type="TRAM", capacity=rd.randint(251, 500)
         )
 
-        try:
+        with self.assertRaises(core_exc.ValidationError) as context:
             vehicle.clean()
-
-        except core_exc.ValidationError as error:
-            assert error.message == "Trams cannot have a capacity greater than 250."
+            assert context.exception.message == "Trams cannot have a capacity greater than 250."
